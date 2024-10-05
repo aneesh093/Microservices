@@ -1,12 +1,19 @@
 package com.talkyteck.accounts.service;
 
+import com.talkyteck.accounts.constants.AccountConstants;
 import com.talkyteck.accounts.dto.AccountsDTO;
+import com.talkyteck.accounts.dto.CustomerDTO;
 import com.talkyteck.accounts.entity.Accounts;
+import com.talkyteck.accounts.entity.Customer;
+import com.talkyteck.accounts.exceptions.CustomerAlreadyExistException;
 import com.talkyteck.accounts.repository.AccountRepository;
 import com.talkyteck.accounts.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -16,9 +23,26 @@ public class AccountService {
     private CustomerRepository  customerRepository;
     private ModelMapper mapper;
 
-    public void createAccount(AccountsDTO accountsDTO) {
-        Accounts accounts = mapper.map(accountsDTO, Accounts.class);
-        accountRepository.save(accounts);
+    public void createCustomer(CustomerDTO customerDTO) {
+        Customer customer = mapper.map(customerDTO, Customer.class);
 
+        if(customerRepository.findByMobileNumber(customer.getMobileNumber()).isPresent()) {
+            throw new CustomerAlreadyExistException("Customer already exists "+customer.getMobileNumber());
+        }
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setCreatedBy("Name");
+        Customer savedCustomer = customerRepository.save(customer);
+        accountRepository.save(createAccount(savedCustomer));
+    }
+
+    public Accounts createAccount(Customer savedCustomer) {
+        Accounts account = new Accounts();
+        account.setAccountNumber(100000L+ new Random().nextInt(900000));
+        account.setCustomerId(savedCustomer.getCustomerId());
+        account.setAccountType(AccountConstants.SAVINGS);
+        account.setBranchAddress(AccountConstants.ADDRESS);
+        account.setCreatedAt(LocalDateTime.now());
+        account.setCreatedBy("Name");
+        return account;
     }
 }
