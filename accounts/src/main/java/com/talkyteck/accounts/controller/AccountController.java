@@ -4,7 +4,6 @@ import com.talkyteck.accounts.constants.AccountConstants;
 import com.talkyteck.accounts.dto.CustomerDTO;
 import com.talkyteck.accounts.dto.ResponseDTO;
 import com.talkyteck.accounts.service.AccountService;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +30,19 @@ public class AccountController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(customerDTO);
+    }
+
+    @PutMapping("/updateCustomer")
+    public ResponseEntity<ResponseDTO> updateCustomer(@RequestBody CustomerDTO customer) {
+        boolean isUpdated = accountService.updateCustomer(customer);
+        if(isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDTO(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(AccountConstants.STATUS_500, AccountConstants.MESSAGE_500));
+        }
     }
 }
