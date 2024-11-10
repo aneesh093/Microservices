@@ -6,6 +6,7 @@ import com.talkyteck.accounts.dto.CustomerDTO;
 import com.talkyteck.accounts.entity.Accounts;
 import com.talkyteck.accounts.entity.Customer;
 import com.talkyteck.accounts.exceptions.CustomerAlreadyExistException;
+import com.talkyteck.accounts.exceptions.ResourceNotFoundException;
 import com.talkyteck.accounts.repository.AccountRepository;
 import com.talkyteck.accounts.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
@@ -45,4 +46,19 @@ public class AccountService {
         account.setCreatedBy("Name");
         return account;
     }
+
+    public CustomerDTO fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                ()->new ResourceNotFoundException("Customer", "mobile number", mobileNumber)
+        );
+
+        Accounts account = accountRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                ()->new ResourceNotFoundException("Account", "customer id", String.valueOf(customer.getCustomerId()))
+        );
+
+        CustomerDTO customerDTO = mapper.map(customer, CustomerDTO.class);
+        customerDTO.setAccounts(mapper.map(account, AccountsDTO.class));
+        return customerDTO;
+    }
+
 }
