@@ -81,4 +81,15 @@ public class AccountService {
       }
       return isUpdated;
     }
+
+    public boolean deleteCustomer(String mobileNumber) {
+        boolean isDeleted = false;
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobile number", mobileNumber));
+
+        accountRepository.deleteByCustomerId(customer.getCustomerId());
+        customerRepository.deleteById(customer.getCustomerId());
+        isDeleted = true;
+        return isDeleted;
+    }
 }
