@@ -4,6 +4,8 @@ import com.talkyteck.accounts.constants.AccountConstants;
 import com.talkyteck.accounts.dto.CustomerDTO;
 import com.talkyteck.accounts.dto.ResponseDTO;
 import com.talkyteck.accounts.service.AccountService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/createAccount")
-    public ResponseEntity<ResponseDTO> createAccount(@RequestBody CustomerDTO customer) {
+    public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customer) {
         accountService.createCustomer(customer);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -25,7 +27,9 @@ public class AccountController {
     }
 
     @GetMapping("/getCustomer")
-    public ResponseEntity<CustomerDTO> getCustomer(@RequestParam String mobileNumber) {
+    public ResponseEntity<CustomerDTO> getCustomer(@RequestParam
+                                                       @Pattern(regexp = "(^$|[0-9]{10})",message = "Mobile number is not valid")
+                                                       String mobileNumber) {
         CustomerDTO customerDTO = accountService.fetchAccount(mobileNumber);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -33,7 +37,7 @@ public class AccountController {
     }
 
     @PutMapping("/updateCustomer")
-    public ResponseEntity<ResponseDTO> updateCustomer(@RequestBody CustomerDTO customer) {
+    public ResponseEntity<ResponseDTO> updateCustomer(@Valid @RequestBody CustomerDTO customer) {
         boolean isUpdated = accountService.updateCustomer(customer);
         if(isUpdated) {
             return ResponseEntity
@@ -48,7 +52,9 @@ public class AccountController {
 
 
     @DeleteMapping("/deleteCustomer")
-    public ResponseEntity<ResponseDTO> deleteCustomer(@RequestParam String mobileNumber) {
+    public ResponseEntity<ResponseDTO> deleteCustomer(@RequestParam
+                                                          @Pattern(regexp = "(^$|[0-9]{10})",message = "Mobile number is not valid")
+                                                          String mobileNumber) {
         boolean isDeleted = accountService.deleteCustomer(mobileNumber);
         if (isDeleted) {
             return ResponseEntity
