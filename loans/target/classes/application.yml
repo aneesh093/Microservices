@@ -1,6 +1,4 @@
 
-server:
-  port: 8070
 spring:
   application:
     name: "loans"

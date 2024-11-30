@@ -1,0 +1,29 @@
+Create a docker image using Dockerfile
+
+1) Create a docker file and specify Java and other configuration 
+	FROM openjdk:21-jdk-slim
+	LABEL maintainer: aneesh093
+	COPY /target/jarName jarName
+	ENTRYPOINT : ["java","-jar","jarName"]
+2) Build the jar file
+3) Create the image
+	docker build . -t aneesh093/accounts:v1
+4) Run the application 
+	docker run -d -p 8080:8080 aneesh093/accounts:
+
+
+Create a docker image using buildpacks
+
+1) Add image tag in the pom - configuration section and excecute below image :
+	mvn spring-boot:build-image
+2)  Once the image is created then run the application : 
+	docker run -d -p 8081:8080 aneesh093/loans:v1
+
+
+Create a docker image using Google Jib
+
+1) Include the Google jib plugin in the Pom.xml
+2) Execute the below command
+	mvn compile jib:dockerBuild 
+3) Run the application:
+	docker run -d -p 8070:8080 aneesh093/cards:v1
