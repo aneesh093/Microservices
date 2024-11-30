@@ -1,0 +1,38 @@
+services:
+    accounts:
+      image: "aneesh093/accounts:a1"
+      container_name: "accounts_ms"
+      ports:
+        - "8080:8080"
+      deploy:
+        resources:
+          limits:
+            memory: "700m"
+      networks:
+        - demo_network
+    loans:
+      image: "aneesh093/loans:v1"
+      container_name: "loans_ms"
+      ports:
+        - "8090:8080"
+      deploy:
+        resources:
+          limits:
+            memory: "700m"
+      networks:
+        - demo_network
+    cards:
+      image: "aneesh093/cards:v1"
+      container_name: "cards_ms"
+      ports:
+        - "9000:8080"
+      deploy:
+        resources:
+          limits:
+            memory: "700m"
+      networks:
+        - demo_network
+
+networks:
+  demo_network:
+    driver: "bridge"
