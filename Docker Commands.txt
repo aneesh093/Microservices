@@ -27,3 +27,43 @@ Create a docker image using Google Jib
 	mvn compile jib:dockerBuild 
 3) Run the application:
 	docker run -d -p 8070:8080 aneesh093/cards:v1
+
+
+To Push the Docker image to Docker Hub
+	docker image push docker.io/aneesh093/accounts:a1
+	docker image push docker.io/aneesh093/loans:v1
+	docker image push docker.io/aneesh093/cards:v1
+
+
+To start all the Microservices at a single shot - Using Docker Compose
+
+1) Create a docker-compose.ym file
+2) Mention the elements
+ Ex : 
+
+services:
+    accounts:
+      image: "aneesh093/accounts:a1"
+      container_name: "accounts_ms"
+      ports:
+        - "8080:8080"
+      deploy:
+        resources:
+          limits:
+            memory: "512m"
+          reservations:
+            memory: "256m"
+      networks:
+        - demo_network
+
+networks:
+  demo_network:
+    driver: "bridge"
+
+
+To Intercommunicate with Microservices we need to create a network 	
+ - Create a network and give a name. Ex - demo-network
+ - Create a network tag and specify driver as bridge. It will act as a bridge between all micro   	services
+
+3) Run docker compose up -d
+4) Close the Docker compose docker compose down
